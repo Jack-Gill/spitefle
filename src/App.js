@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import "./App.css";
-import utils from "./utils";
+import { copy } from "./utils";
 import { Attempt } from "./components";
 
 function App() {
@@ -99,9 +99,7 @@ function App() {
         <br />
         <button onClick={() => setResult(generate())}>Regenerate</button>
         <br />
-        <button
-          onClick={() => utils.copyTextToClipboard(result.resultAsString)}
-        >
+        <button onClick={() => copy(result.resultAsString)}>
           Copy To Clipboard
         </button>
       </header>
