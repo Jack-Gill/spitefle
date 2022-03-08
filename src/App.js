@@ -5,7 +5,9 @@ import { copy } from "./utils";
 import { Attempt } from "./components";
 
 function App() {
-  const generate = () => {
+  const [hardMode, setHardMode] = useState(false);
+
+  const generate = (hardMode) => {
     let then = new Date("06/19/2021");
     let now = new Date();
     let difference = now.getTime() - then.getTime();
@@ -55,13 +57,18 @@ function App() {
       ) {
         const previousAttempt = attemptsMap[attemptsIndex - 1];
         console.log(previousAttempt);
-        if (previousAttempt && previousAttempt[letterIndex] === "🟩") {
+        if (
+          hardMode &&
+          previousAttempt &&
+          previousAttempt[letterIndex] === "🟩"
+        ) {
           letters.push("🟩");
         } else {
           letters.push(getLetter());
         }
       }
       attemptsMap.push(letters);
+      if (!hardMode) corrects = 4;
     }
 
     if (attempts < 7) {
@@ -73,7 +80,7 @@ function App() {
 
     console.log(attemptsMap);
 
-    const title = `Wordle ${days} ${attemptsString}/6`;
+    const title = `Wordle ${days} ${attemptsString}/6 ${hardMode ? "*" : ""}`;
     let resultAsString = title + "\n";
 
     attemptsMap.forEach((attempt) => {
@@ -93,11 +100,25 @@ function App() {
     <div className="App">
       <header className="App-header">
         <p>{result.title}</p>
-        {result.attemptsMap.map((attempt) => {
-          return <Attempt>{attempt}</Attempt>;
+        {result.attemptsMap.map((attempt, index) => {
+          return <Attempt key={`attempt${index}`}>{attempt}</Attempt>;
         })}
         <br />
-        <button onClick={() => setResult(generate())}>Regenerate</button>
+        <button onClick={() => setResult(generate(hardMode))}>
+          Regenerate
+        </button>
+        <br />
+        <label>
+          <input
+            type="checkbox"
+            checked={hardMode}
+            onChange={() => {
+              setHardMode(!hardMode);
+              setResult(generate(!hardMode));
+            }}
+          />
+          Hard Mode
+        </label>
         <br />
         <button onClick={() => copy(result.resultAsString)}>
           Copy To Clipboard
